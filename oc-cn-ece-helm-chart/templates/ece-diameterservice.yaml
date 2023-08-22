@@ -1,0 +1,20 @@
+{{ range $key, $value := .Values.diametergateway.diametergatewayList }}
+{{- if eq $value.diameterGatewayConfiguration.clusterName $.Values.charging.clusterName }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: ece-dgw-{{ print (add1 $key) }}
+  labels:
+    app: ece-dgw-{{ print (add1 $key) }}
+spec:
+  type: LoadBalancer
+  ports:
+   - name: {{ $value.coherenceMemberName | quote }}
+     protocol: TCP
+     port: {{ $.Values.diametergatewayService.port }}
+     targetPort: {{ $.Values.diametergatewayService.port }}
+  selector:
+    application: {{ $value.coherenceMemberName | quote }}
+{{- end }}
+---
+{{ end }}

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ece-emg
+  labels:
+    app: ece-emg
+spec:
+  type: LoadBalancer
+  ports:
+   - name: emg
+     protocol: TCP
+     port: 15502
+     targetPort: 15502
+  selector:
+    application: emgateway

@@ -1,0 +1,124 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Values.charging.configLoader.coherenceMemberName }}
+  labels:
+    app: {{ .Values.charging.labels | default "ece" }}
+spec:
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.charging.labels | default "ece" }}
+    spec:
+      {{- if .Values.imagePullSecrets }}
+      imagePullSecrets:
+      - name: {{ .Values.imagePullSecrets }}
+      {{- end }}
+      restartPolicy: OnFailure
+      serviceAccount: ece-{{ .Release.Namespace }}
+      initContainers:
+      - name: ece-init
+        image: {{ .Values.imageRepository }}{{ .Values.container.image }}
+        command: ["/bin/sh", "-c"]
+        args:
+        - /home/charging/temp/PodInitCheck.sh;
+        volumeMounts:
+        - name: logs-volume
+          mountPath: {{ .Values.eceproperties.logsDir }}
+        env:
+        - name: COH_MEMBER
+          value: {{ .Values.charging.configLoader.coherenceMemberName | quote }}
+        - name: METRICS_PORT
+          value: {{ .Values.charging.metrics.port | quote }}
+        - name: STATE_ID_METRIC
+          value: ece_state
+        - name: SERVICE_NODE_COUNT_METRIC
+          value: coherence_partition_assignment_service_node_count
+        - name: DESIRED_ECS_REPLICAS
+          value: {{ default "3" .Values.charging.ecs.replicas | quote }}
+        - name: DESIRED_ECS1_REPLICAS
+          value: {{ default "3" .Values.charging.ecs1.replicas | quote }}
+      containers:
+      - name: ece
+        image: {{ .Values.imageRepository }}{{ .Values.container.image }}
+        imagePullPolicy: {{ .Values.container.imagePullPolicy }}
+        command: ["/bin/sh", "-c"]
+        args:
+        - cp /home/charging/ext/ece_custom_data/diameter_mediation.spec /home/charging/temp/sample_data/config_data/specifications/ece_end2end;/home/charging/temp/start.sh configloader;
+        volumeMounts:
+          - name: config-volume
+            mountPath: /home/charging/config
+          - name: logs-volume
+            mountPath: {{ .Values.eceproperties.logsDir }}
+          - name: external-volume
+            mountPath: /home/charging/ext
+          - name: ece-wallet-volume
+            mountPath: /home/charging/wallet
+          - name: {{ .Values.secretEnv.name }}
+            mountPath: /home/charging/opt/ECE/oceceserver/secret
+          {{ if eq .Values.charging.customSSLWallet true }}
+          - name: secret-wallet
+            mountPath: /home/charging/wallet/custom
+          {{ end }}
+        env:
+        - name: FEDERATION_ENABLED
+          value: {{ .Values.charging.isFederation | quote }}
+        - name: COH_WKA
+          {{- if eq .Values.charging.secondaryCluster "true" }}
+          {{ range $key, $value := .Values.charging.cluster.secondary }}
+          {{- if eq $value.clusterName $.Values.charging.clusterName }}
+          value: {{ $value.eceServiceName | quote }}
+          {{- end }}
+          {{ end }}
+          {{- else }}
+          value: {{ .Values.charging.cluster.primary.eceServiceName }}
+          {{- end }}
+        - name: COH_CLUSTER
+          value: {{ .Values.charging.clusterName | quote }}
+        - name: COH_MEMBER
+          value: {{ .Values.charging.configLoader.coherenceMemberName | quote }}
+        - name: COH_WKA_PORT
+          value: {{ .Values.charging.coherencePort | quote }}
+        - name: JVM_GC_OPTS
+          value: {{ .Values.charging.configLoader.jvmGCOpts | quote }}
+        - name: JAVA_JMX_OPTS
+          value: {{ .Values.charging.configLoader.jvmJMXOpts | quote }}
+        - name: COH_MAIN_ARGS
+          value: {{ .Values.charging.configLoader.jvmCoherenceOpts | quote }}
+        - name: EXTRA_JVM_ARGS
+          value: {{ .Values.charging.configLoader.jvmOpts | quote }}
+        - name: STATE_ID_METRIC
+          value: ece_state
+        - name: METRICS_PORT
+          value: {{ .Values.charging.metrics.port | quote }}
+        - name: CLUSTER_DOMAIN
+          value: {{ .Values.charging.clusterDomain | quote }}
+        - name: PARTITIONS_UNBALANCED_METRIC
+          value: coherence_service_partitions_unbalanced
+        - name: ECE_PERSISTENCE_ENABLED
+          value: {{ .Values.charging.persistenceEnabled | quote }}
+        - name: KUBERNETES_NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+      volumes:
+        - name: config-volume
+          configMap:
+             name: charging-settings-{{ .Release.Namespace }}
+        - name: logs-volume
+          persistentVolumeClaim:
+             claimName: {{ .Values.pvc.logs.name }}
+        - name: external-volume
+          persistentVolumeClaim:
+             claimName: {{ .Values.pvc.external.name }}
+        - name: ece-wallet-volume
+          persistentVolumeClaim:
+            claimName: {{ .Values.pvc.wallet.name }}
+        - name: {{ .Values.secretEnv.name }}
+          secret:
+             secretName: {{ .Values.secretEnv.name }}-{{ .Release.Namespace }}
+        {{ if eq .Values.charging.customSSLWallet true }}
+        - name: secret-wallet
+          secret:
+             secretName: {{ .Values.charging.secretCustomWallet.name }}
+        {{ end }}
