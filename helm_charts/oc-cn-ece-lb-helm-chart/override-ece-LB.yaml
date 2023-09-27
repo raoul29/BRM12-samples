@@ -1,0 +1,79 @@
+imageRepository: iad.ocir.io/idqji4proemh/brmcn-ps8/
+imagePullSecrets: docker-reg-secret
+container:
+  image: oc-cn-ece:12.0.0.8.0
+  imagePullPolicy: Always
+secretEnv:
+  uniPass: QzFHMmIzdTQjIw==
+  PERSISTENCEDATABASEPASSWORD:
+  - schema: '1'
+    PASSWORD: QzFHMmIzdTQjIw==
+  - schema: '2'
+    PASSWORD: QzFHMmIzdTQjIw==
+  PERSISTENCEDBAPASSWORD:
+  - schema: '1'
+    PASSWORD: cGluREI5OSMj
+  - schema: '2'
+    PASSWORD: cGluREI5OSMj
+  PERSISTENCEDATABASEKEYPASS:
+  - schema: '1'
+    PASSWORD: QzFHMmIzdTQjIw==
+  - schema: '2'
+    PASSWORD: QzFHMmIzdTQjIw==
+  BRMDATABASEPASSWORD:
+  - schema: '1'
+    PASSWORD: QzFHMmIzdTQjIw==
+  - schema: '2'
+    PASSWORD: QzFHMmIzdTQjIw==
+  BRMDATABASEKEYPASS:
+  - schema: '1'
+    PASSWORD: QzFHMmIzdTQjIw==
+  - schema: '2'
+    PASSWORD: QzFHMmIzdTQjIw==
+brmgatewayService:
+    port: 15502
+httpgatewayService:
+    port: 8080
+httpgateway:
+   serverHttpExternalPort: "31500"
+diametergatewayService:
+    port: 3868
+radiusgatewayService:
+    port: 1812
+monitoringagent:
+    type: LoadBalancer
+storageClass:
+  name: oci-fss
+monitoringAgent:
+   monitoringAgentList:
+      - name: "monitoringagent1"
+        replicas: 1
+        jmxport: "31020"
+        jmxEnabled: "true"
+        jvmJMXOpts: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false  -Dcom.sun.management.jmxremote.password.file=../config/jmxremote.password -Dsecure.access.name=admin -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.port=9090 -Dcom.sun.management.jmxremote.rmi.port=9090"
+        jvmOpts: "-Djava.net.preferIPv4Addresses=true"
+        jvmGCOpts: ""
+        restartCount: "0"
+        nodeSelector: ""
+      - name: "monitoringagent2"
+        replicas: 1
+        jmxport: "31021"
+        jmxEnabled: "true"
+        jvmJMXOpts: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false  -Dcom.sun.management.jmxremote.password.file=../config/jmxremote.password -Dsecure.access.name=admin -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.port=9090 -Dcom.sun.management.jmxremote.rmi.port=9090"
+        jvmOpts: "-Djava.net.preferIPv4Addresses=true"
+        jvmGCOpts: ""
+        restartCount: "0"
+        nodeSelector: ""
+charging:
+  clusterName: "BRM"
+  isFederation: "true"
+  activeCluster: "true"
+  primaryCluster: "true"
+  secondaryCluster: "false"
+  clusterTopology: "active-active"
+  federatedCacheScheme:
+     federationPort:
+        brmfederated: 31016
+        xreffederated: 31017
+        replicatedfederated: 31018
+        offerProfileFederated: 31019

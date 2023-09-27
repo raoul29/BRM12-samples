@@ -1,0 +1,27 @@
+{{ range $key, $value := .Values.diametergateway.diametergatewayList }}
+{{- if eq $value.diameterGatewayConfiguration.clusterName $.Values.charging.clusterName }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: ece-dgw-{{ print (add1 $key) }}
+  annotations:
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+    service.beta.kubernetes.io/oci-load-balancer-internal: "true"
+    service.beta.kubernetes.io/oci-load-balancer-shape: flexible
+    service.beta.kubernetes.io/oci-load-balancer-shape-flex-max: "10"
+    service.beta.kubernetes.io/oci-load-balancer-shape-flex-min: "10"
+    service.beta.kubernetes.io/oci-load-balancer-subnet1: ocid1.subnet.oc1.phx.aaaaaaaatwcxea7mqufww4rr3l3n7l3ywbzv4xwyqf7cpu3a5ycbysjl42qa
+  labels:
+    app: ece-dgw-{{ print (add1 $key) }}
+spec:
+  type: LoadBalancer
+  ports:
+   - name: {{ $value.coherenceMemberName | quote }}
+     protocol: TCP
+     port: {{ $.Values.diametergatewayService.port }}
+     targetPort: {{ $.Values.diametergatewayService.port }}
+  selector:
+    application: {{ $value.coherenceMemberName | quote }}
+{{- end }}
+---
+{{ end }}

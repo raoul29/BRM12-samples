@@ -1,0 +1,1325 @@
+imageRepository: ""
+imagePullSecrets:
+container:
+   image: "oc-cn-ece:12.0.0.8.0"
+   imagePullPolicy: IfNotPresent
+volume:
+   chargingSettingPath: "/home/charging/opt/ECE/oceceserver/config"
+secretEnv:
+   name: secret-env
+   uniPass:
+   walletPassword: 
+   JMSQUEUEPASSWORD: 
+   RADIUSSHAREDSECRET: 
+   NOTIFYEVENTKEYPASS: 
+   BRMGATEWAYPASSWORD:
+   PDCPASSWORD: 
+   PDCKEYSTOREPASSWORD: 
+   PERSISTENCEDATABASEPASSWORD:
+     - schema: 1
+       PASSWORD:
+   PERSISTENCEDBAPASSWORD:
+     - schema: 1
+       PASSWORD:
+   PERSISTENCEDATABASEKEYPASS:
+     - schema: 1
+       PASSWORD:
+   ECEHTTPGATEWAYSERVERSSLKEYSTOREPASSWORD:
+   BRM_SERVER_WALLET_PASSWD: 
+   BRM_ROOT_WALLET_PASSWD:
+   BRMDATABASEPASSWORD:
+      - schema: 1
+        PASSWORD:
+   BRMDATABASEKEYPASS:
+      - schema: 1
+        PASSWORD:
+sslconnectioncertificates:
+   #enable ssl connection certificates generate, export, import
+   SSLENABLED: "true"
+   #mandatory format should be as below
+   DNAME: "CN=${HOSTNAME}, OU=Oracle Communication Application, O=Oracle Corporation, L=Redwood Shores, S=California, C=US"
+   #validity units is in Days (for e.g 200 days)
+   SSLKEYSTOREVALIDITY: 200000
+job:
+   sdk:
+      name: "sdk"
+      command: ""
+      runjob: "false"
+   customerloader:
+      name: "customerloader"
+      #To load the product cross-reference data, set -loadCrossRefData <customer_updater_name for required schema>
+      command: "-incremental customerupdater1"
+      runjob: "false"
+   jmsconfig:
+      name: "jmsconfig"
+      command: ""
+      runjob: "false"
+      preCreateJmsServerAndModule: "false"
+
+emgateway:
+   serviceFqdn: "ece-emg"
+   emGatewayList:
+      - coherenceMemberName: "emgateway1"
+        jmxport: ""
+        replicas: 1
+        jmxEnabled: true
+        coherencePort:
+        jvmGCOpts: "-XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+PrintTenuringDistribution -XX:+PrintAdaptiveSizePolicy -XX:-UseGCLogFileRotation -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:MaxGCPauseMillis=50 -XX:GCPauseIntervalMillis=200 -XX:NumberOfGCLogFiles=99"
+        jvmJMXOpts: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false "
+        jvmCoherenceOpts: "-Dpof.config=charging-pof-config.xml -Dcoherence.override=charging-coherence-override-dev.xml  -Dcoherence.security=false -Dsecure.access.name=admin"
+        jvmOpts: "-Dece.metrics.http.service.enabled=true"
+        restartCount: "0"
+        emGatewayConfiguration:
+           name: "emgateway1"
+           port: "15502"
+           threadPoolSize: "10"
+           sslEnabled: "1"
+           socketKeepAlive: "1"
+           wallet: "/home/charging/wallet/brmwallet/server/cwallet.sso"
+           clientAuthenticationEnabled: "0"
+           updateResponseTimeout: "30000"
+
+      - coherenceMemberName: "emgateway2"
+        jmxport: ""
+        replicas: 1
+        jmxEnabled: true
+        coherencePort:
+        jvmGCOpts: "-XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+PrintTenuringDistribution -XX:+PrintAdaptiveSizePolicy -XX:-UseGCLogFileRotation -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:MaxGCPauseMillis=50 -XX:GCPauseIntervalMillis=200 -XX:NumberOfGCLogFiles=99"
+        jvmJMXOpts: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false "
+        jvmCoherenceOpts: "-Dpof.config=charging-pof-config.xml -Dcoherence.override=charging-coherence-override-dev.xml  -Dcoherence.security=false -Dsecure.access.name=admin"
+        jvmOpts: "-Dece.metrics.http.service.enabled=true"
+        restartCount: "0"
+        emGatewayConfiguration:
+           name: "emgateway2"
+           port: "15502"
+           threadPoolSize: "10"
+           sslEnabled: "1"
+           socketKeepAlive: "1"
+           wallet: "/home/charging/wallet/brmwallet/server/cwallet.sso"
+           clientAuthenticationEnabled: "0"
+           updateResponseTimeout: "30000"
+
+radiusgateway:
+   wallet: "/home/charging/wallet/brmwallet/client/cwallet.sso"
+   queueSize: "8"
+   avpName: "Service-Type"
+   vendorId: "0"
+   keyPass: ""
+   keyStoreLocation: ""
+   enableRetransmissionCheck: "true"
+   timeToLive: "30000"
+   radiusgatewayList:
+      - coherenceMemberName: "radiusgateway1"
+        jmxport: ""
+        replicas: 1
+        jmxEnabled: true
+        coherencePort:
+        jvmGCOpts: "-XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+PrintTenuringDistribution -XX:+PrintAdaptiveSizePolicy -XX:-UseGCLogFileRotation -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:MaxGCPauseMillis=50 -XX:GCPauseIntervalMillis=200 -XX:NumberOfGCLogFiles=99"
+        jvmJMXOpts: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false "
+        jvmCoherenceOpts: "-Dpof.config=charging-pof-config.xml -Dcoherence.override=charging-coherence-override-dev.xml  -Dcoherence.security=false -Dsecure.access.name=admin"
+        jvmOpts: "-Dece.metrics.http.service.enabled=true"
+        restartCount: "0"
+        radiusGatewayConfiguration:
+           name: "radiusgateway1"
+           radiusTrafficPort: "1812"
+           ioThreadPoolSize: "16"
+           noOfChallenges: "1"
+
+      - coherenceMemberName: "radiusgateway2"
+        jmxport: ""
+        replicas: 1
+        jmxEnabled: true
+        coherencePort:
+        jvmGCOpts: "-XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+PrintTenuringDistribution -XX:+PrintAdaptiveSizePolicy -XX:-UseGCLogFileRotation -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:MaxGCPauseMillis=50 -XX:GCPauseIntervalMillis=200 -XX:NumberOfGCLogFiles=99"
+        jvmJMXOpts: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false "
+        jvmCoherenceOpts: "-Dpof.config=charging-pof-config.xml -Dcoherence.override=charging-coherence-override-dev.xml  -Dcoherence.security=false -Dsecure.access.name=admin"
+        jvmOpts: "-Dece.metrics.http.service.enabled=true"
+        restartCount: "0"
+        radiusGatewayConfiguration:
+           name: "radiusgateway2"
+           radiusTrafficPort: "1812"
+           ioThreadPoolSize: "16"
+           noOfChallenges: "1"
+
+diametergateway:
+   diametergatewayList:
+      - coherenceMemberName: "diametergateway1"
+        jmxport: ""
+        replicas: 1
+        jmxEnabled: true
+        coherencePort:
+        jvmGCOpts: "-XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+PrintTenuringDistribution -XX:+PrintAdaptiveSizePolicy -XX:-UseGCLogFileRotation -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:MaxGCPauseMillis=50 -XX:GCPauseIntervalMillis=200 -XX:NumberOfGCLogFiles=99"
+        jvmJMXOpts: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false "
+        jvmCoherenceOpts: "-Dcoherence.role=OracleCommunicationBrmChargingEcegatewayDiameterGatewayLauncher -Dpof.config=charging-pof-config.xml -Dcoherence.override=charging-coherence-override-dev.xml  -Dcoherence.security=false -Dsecure.access.name=admin"
+        jvmOpts: "-Dece.metrics.http.service.enabled=true"
+        restartCount: "0"
+        nodeSelector: ""
+        diameterGatewayConfiguration:
+           name: "diametergateway1"
+           clusterName: "BRM"
+           diameterTrafficPort: "3868"
+           ioThreadPoolSize: "10"
+           responseTimeout: "10"
+           watchDogInterval: "30"
+           originHost: "ece.example.com"
+           originRealm: "example.com"
+           diameterTrafficHost: ""
+           diameterTrafficHostSctp: ""
+           loopback: "false"
+           requestProcessorThreadPoolSize: "10"
+           requestProcessorBatchSize: "10"
+           notificationThreadPoolSize: "10"
+           maxNotificationCommitSize: "100"
+           ccFailover: "FAILOVER_SUPPORTED"
+           creditControlFailureHandling: "RETRY_AND_TERMINATE"
+           directDebitingFailureHandling: "TERMINATE_OR_BUFFER"
+           sctpMaxInStream: "0"
+           sctpMaxOutStream: "0"
+           sctpSendBufferSize: "0"
+           sctpReceiveBufferSize: "0"
+           notificationListenerConnectionPoolSize: "10"
+           allowMultipleConnectionsPerPeer: "false"
+
+      - coherenceMemberName: "diametergateway2"
+        jmxport: ""
+        replicas: 1
+        jmxEnabled: true
+        coherencePort:
+        jvmGCOpts: "-XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+PrintTenuringDistribution -XX:+PrintAdaptiveSizePolicy -XX:-UseGCLogFileRotation -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:MaxGCPauseMillis=50 -XX:GCPauseIntervalMillis=200 -XX:NumberOfGCLogFiles=99"
+        jvmJMXOpts: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false "
+        jvmCoherenceOpts: "-Dcoherence.role=OracleCommunicationBrmChargingEcegatewayDiameterGatewayLauncher -Dpof.config=charging-pof-config.xml -Dcoherence.override=charging-coherence-override-dev.xml  -Dcoherence.security=false -Dsecure.access.name=admin"
+        jvmOpts: "-Dece.metrics.http.service.enabled=true"
+        restartCount: "0"
+        nodeSelector: ""
+        diameterGatewayConfiguration:
+           name: "diametergateway2"
+           clusterName: "BRM"
+           diameterTrafficPort: "3868"
+           ioThreadPoolSize: "10"
+           responseTimeout: "10"
+           watchDogInterval: "30"
+           originHost: "ece.example.com"
+           originRealm: "example.com"
+           diameterTrafficHost: ""
+           diameterTrafficHostSctp: ""
+           loopback: "false"
+           requestProcessorThreadPoolSize: "10"
+           requestProcessorBatchSize: "10"
+           notificationThreadPoolSize: "10"
+           maxNotificationCommitSize: "100"
+           ccFailover: "FAILOVER_SUPPORTED"
+           creditControlFailureHandling: "RETRY_AND_TERMINATE"
+           directDebitingFailureHandling: "TERMINATE_OR_BUFFER"
+           sctpMaxInStream: "0"
+           sctpMaxOutStream: "0"
+           sctpSendBufferSize: "0"
+           sctpReceiveBufferSize: "0"
+           notificationListenerConnectionPoolSize: "10"
+           allowMultipleConnectionsPerPeer: "false"
+
+cdrgateway:
+  cdrgatewayList:
+    - coherenceMemberName: "cdrgateway1"
+      jmxport: ""
+      replicas: 1
+      jmxEnabled: true
+      coherencePort:
+      jvmGCOpts: "-XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+PrintTenuringDistribution -XX:+PrintAdaptiveSizePolicy -XX:-UseGCLogFileRotation -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:MaxGCPauseMillis=50 -XX:GCPauseIntervalMillis=200 -XX:NumberOfGCLogFiles=99"
+      jvmJMXOpts: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false "
+      jvmCoherenceOpts: "-Dpof.config=charging-pof-config.xml -Dcoherence.override=charging-coherence-override-dev.xml  -Dcoherence.security=false -Dsecure.access.name=admin"
+      jvmOpts: "-Dece.metrics.http.service.enabled=true"
+      restartCount: "0"
+      cdrGatewayConfiguration:
+        name: "cdrgateway1"
+        clusterName: "BRM"
+        primaryInstanceName: "cdrgateway1"
+        schemaNumber: "1"
+        isNoSQLConnection: "true"
+        noSQLConnectionName: "noSQLConnection"
+        connectionName: "oraclePersistence1"
+        cdrPort: "8084"
+        cdrHost: "ece-cdrgatewayservice"
+        individualCdr: "false"
+        cdrServerCorePoolSize: "32"
+        cdrServerMaxPoolSize: "256"
+
+httpgateway:
+   serverSslKeyStore: "httpGatewayServer.jks"
+   serverSslKeyStoreType: "PKCS12"
+   serverSslKeyStoreAlias: "oracle"
+   walletLocation: "/home/charging/wallet/ecewallet/"
+   snrHttp2Enable: "true"
+   cdrGenerationEnabled: "false"
+   cdrGenerationStandaloneMode: "false"
+   cdrGatewayList: "ece-cdrgatewayservice:8084"
+   cdrGatewayRetry: "3"
+   retryIntervalInMillis: "5000"
+   serverHttpExternalPort: "31500"
+   scpAuthorities: ""
+   rateOfflineCDRinRealtime: "false"
+   generateCDRsForOnlineRequests: "true"
+   callScreeningEnabled: "true"
+   notificationListenerConnectionPoolSize: "10"
+   httpgatewayList:
+      - coherenceMemberName: "httpgateway1"
+        jmxport: ""
+        replicas: 1
+        maxreplicas: 3
+        averageCpuUtilization: 70
+        averageMemoryUtilization: ""
+        cpuLimit: 2000m
+        cpuRequest: 1000m
+        memoryLimit: 3Gi
+        memoryRequest: 1Gi
+        scaleDownStabilizationWindowSeconds: 120
+        disableHpaScaleDown: "false"
+        jmxEnabled: true
+        coherencePort:
+        jvmGCOpts: "-XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+PrintTenuringDistribution -XX:+PrintAdaptiveSizePolicy -XX:-UseGCLogFileRotation -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:MaxGCPauseMillis=50 -XX:GCPauseIntervalMillis=200 -XX:NumberOfGCLogFiles=99"
+        jvmJMXOpts: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false "
+        jvmCoherenceOpts: "-Dpof.config=charging-pof-config.xml -Dcoherence.override=charging-coherence-override-dev.xml  -Dcoherence.security=false -Dsecure.access.name=admin"
+        jvmOpts: "-Dece.metrics.http.service.enabled=true"
+        restartCount: "0"
+        httpGatewayConfiguration:
+           name: "httpgateway1"
+           clusterName: "BRM"
+           serverHttp2Enabled: "true"
+           serverPort: "8443"
+           serverHttpPort: "8080"
+           nrfHeartBeatRetryCount: "4"
+           serverSslEnabled: "false"
+           processingThreadPoolSize: "200"
+           processingQueueSize: "32768"
+           kafkaBatchSize: "10"
+           externalTrafficInfo: ""
+
+      - coherenceMemberName: "httpgateway2"
+        jmxport: ""
+        replicas: 1
+        maxreplicas: 3
+        averageCpuUtilization: 70
+        averageMemoryUtilization: ""
+        cpuLimit: 2000m
+        cpuRequest: 1000m
+        memoryLimit: 3Gi
+        memoryRequest: 1Gi
+        scaleDownStabilizationWindowSeconds: 120
+        disableHpaScaleDown: "false"
+        jmxEnabled: true
+        coherencePort:
+        jvmGCOpts: "-XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+PrintTenuringDistribution -XX:+PrintAdaptiveSizePolicy -XX:-UseGCLogFileRotation -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:MaxGCPauseMillis=50 -XX:GCPauseIntervalMillis=200 -XX:NumberOfGCLogFiles=99"
+        jvmJMXOpts: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false "
+        jvmCoherenceOpts: "-Dpof.config=charging-pof-config.xml -Dcoherence.override=charging-coherence-override-dev.xml  -Dcoherence.security=false -Dsecure.access.name=admin"
+        jvmOpts: "-Dece.metrics.http.service.enabled=true"
+        restartCount: "0"
+        httpGatewayConfiguration:
+           name: "httpgateway2"
+           clusterName: "BRM"
+           serverHttp2Enabled: "true"
+           serverPort: "8443"
+           serverHttpPort: "8080"
+           managementServerPort: "9000"
+           nrfHeartBeatRetryCount: "4"
+           serverUndertowWorkerThreads:  "32"
+           serverSslEnabled: "false"
+           processingThreadPoolSize: "200"
+           processingQueueSize: "32768"
+           http2MaxConcurrentStreams: "-1"
+           http2InitialWindowSize: "-1"
+           kafkaBatchSize: "10"
+           externalTrafficInfo: ""
+
+customerUpdater:
+   customerUpdaterList:
+      - schemaNumber: "1"
+        coherenceMemberName: "customerupdater1"
+        replicas: 1
+        jmxEnabled: true
+        coherencePort: ""
+        jvmGCOpts: "-XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+PrintTenuringDistribution -XX:+PrintAdaptiveSizePolicy -XX:-UseGCLogFileRotation -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:MaxGCPauseMillis=50 -XX:GCPauseIntervalMillis=200 -XX:NumberOfGCLogFiles=99"
+        jvmJMXOpts: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false "
+        jvmCoherenceOpts: "-Dpof.config=charging-pof-config.xml -Dcoherence.override=charging-coherence-override-dev.xml  -Dcoherence.security=false -Dsecure.access.name=admin"
+        jvmOpts: "-Dece.metrics.http.service.enabled=true"
+        jmxport: ""
+        restartCount: "0"
+        oracleQueueConnectionConfiguration:
+           name: "customerupdater1"
+           gatewayName: "customerupdater1"
+           hostName: ""
+           port: "1521"
+           sid: "pindb"
+           userName: "pin"
+           jdbcUrl: ""
+           queueName: "IFW_SYNC_QUEUE"
+           suspenseQueueName: "ECE_SUSPENSE_QUEUE"
+           ackQueueName: "ECE_ACK_QUEUE"
+           amtAckQueueName: "ECE_AMT_ACK_QUEUE"
+           dbSSLEnabled: "false"
+           dbSSLType: "oneway"
+           sslServerCertDN: "DC=local,DC=oracle,CN=pindb"
+           trustStoreLocation: "/home/charging/ext/brm_ssl_db_wallet/schema1/cwallet.sso"
+           trustStoreType: "SSO"
+           batchSize: "1"
+           dbTimeout: "900"
+           retryCount: "10"
+           retryInterval: "60"
+           walletLocation: "/home/charging/wallet/ecewallet/"
+
+ratedEventFormatter:
+   ratedEventFormatterList:
+      - schemaNumber: "1"
+        replicas: 1
+        coherenceMemberName: "ratedeventformatter1"
+        jmxEnabled: true
+        coherencePort:
+        jvmGCOpts: "-XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+PrintTenuringDistribution -XX:+PrintAdaptiveSizePolicy -XX:-UseGCLogFileRotation -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:MaxGCPauseMillis=50 -XX:GCPauseIntervalMillis=200 -XX:NumberOfGCLogFiles=99"
+        jvmJMXOpts: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false "
+        jvmCoherenceOpts: "-Dpof.config=charging-pof-config.xml -Dcoherence.override=charging-coherence-override-dev.xml  -Dcoherence.security=false -Dsecure.access.name=admin"
+        jvmOpts: "-Dece.metrics.http.service.enabled=true -DREM_LOG_BASE=/home/charging/opt/ECE/oceceserver/logs/rem"
+        jmxport: ""
+        restartCount: "0"
+        ratedEventFormatterConfiguration:
+           name: "ratedeventformatter1"
+           #clusterName determines site where ref pod is running.
+           clusterName: "BRM"
+           primaryInstanceName: "ratedeventformatter1"
+           partition: "1"
+           noSQLConnectionName: "noSQLConnection"
+           connectionName: "oraclePersistence1"
+           threadPoolSize: "6"
+           retainDuration: "0"
+           ripeDuration: "600"
+           checkPointInterval: "6"
+           maxPersistenceCatchupTime: "0"
+           #parameter siteName, Each REF instance is supposed to handle the rated events for, in ECE active-active setup.
+           #The siteName is to determine which RatedEvent DB table to use.
+           #For the primary REF running in a site1 (BRM) and secondary REF instances running the remote sites (BRM2), siteName parameter value is BRM and RatedEvent DB table to use is RatedEvent_BRM.
+           siteName: ""
+           # use remCdrPlugin and jar to integrate with REM
+           #pluginPath: "brm-rated-event-manager-12.0.0.4.1.jar"
+           #pluginType: "com.oracle.brm.ref_brm_plugin.RatedEventManagerCdrPlugin"
+           pluginPath: "ece-ratedeventformatter.jar"
+           pluginType: "oracle.communication.brm.charging.ratedevent.formatterplugin.internal.BrmCdrPluginDirect"
+           pluginName: "brmCdrPlugin1"
+           noSQLBatchSize: "25"
+
+cdrFormatter:
+ cdrFormatterList:
+   - schemaNumber: "1"
+     replicas: 1
+     coherenceMemberName: "cdrformatter1"
+     jmxEnabled: true
+     coherencePort:
+     jvmGCOpts: "-XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+PrintTenuringDistribution -XX:+PrintAdaptiveSizePolicy -XX:-UseGCLogFileRotation -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:MaxGCPauseMillis=50 -XX:GCPauseIntervalMillis=200 -XX:NumberOfGCLogFiles=99"
+     jvmJMXOpts: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false "
+     jvmCoherenceOpts: "-Dpof.config=charging-pof-config.xml -Dcoherence.override=charging-coherence-override-dev.xml  -Dcoherence.security=false -Dsecure.access.name=admin"
+     jvmOpts: "-Dece.metrics.http.service.enabled=true"
+     jmxport: ""
+     restartCount: "0"
+     cdrFormatterConfiguration:
+       name: "cdrformatter1"
+       clusterName: "BRM"
+       primaryInstanceName: "cdrformatter1"
+       schemaNumber: "1"
+       isNoSQLConnection: "true"
+       noSQLConnectionName: "noSQLConnection"
+       connectionName: "oraclePersistence1"
+       threadPoolSize: "6"
+       retainDuration: "0"
+       ripeDuration: "60"
+       checkPointInterval: "6"
+       maxPersistenceCatchupTime: "0"
+       pluginPath: "ece-cdrformatter.jar"
+       pluginType: "oracle.communication.brm.charging.cdr.formatterplugin.internal.SampleCdrFormatterCustomPlugin"
+       pluginName: "cdrFormatterPlugin1"
+       noSQLBatchSize: "25"
+       cdrStoreFetchSize: "2500"
+       cdrOrphanRecordCleanupAgeInSec: "200"
+       cdrOrphanRecordCleanupSleepIntervalInSec: "200"
+
+brmGateway:
+   brmGatewayList:
+      - schemaNumber: "1"
+        replicas: 1
+        coherenceMemberName: "brmgateway1"
+        jmxEnabled: true
+        coherencePort:
+        jvmGCOpts: "-XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+PrintTenuringDistribution -XX:+PrintAdaptiveSizePolicy -XX:-UseGCLogFileRotation -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:MaxGCPauseMillis=50 -XX:GCPauseIntervalMillis=200 -XX:NumberOfGCLogFiles=99"
+        jvmJMXOpts: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false "
+        jvmCoherenceOpts: "-Dcoherence.role=OracleCommunicationBrmChargingIntegrationsBRMGatewayLauncher -Dpof.config=charging-pof-config.xml -Dcoherence.override=charging-coherence-override-dev.xml  -Dcoherence.security=false -Dsecure.access.name=admin"
+        jvmOpts: "-Dece.metrics.http.service.enabled=true"
+        restartCount: "0"
+        jmxport: ""
+        brmGatewayConfiguration:
+           name: "brmgateway1"
+           clusterName: "BRM"
+           emptyQueueThreadSleepInterval: "50"
+           jmsReceiveSleepInterval: "100"
+           brmResponseTimeOutInterval: "600000"
+           gatewaySleepInterval: "2000"
+           jmsBatchSize: "10"
+           jmsReceiveTimeout: "2000"
+           brmWorkerThreads: "10"
+           brmSchedulerThreadInitialDelay: "10"
+           brmSchedulerThreadDelayPeriod: "3"
+           brmSuspenseQueuePeriod: "1800000"
+           connectionRetryCount: "10"
+           connectionRetryInterval: "10000"
+monitoringAgent:
+   monitoringAgentList:
+      - name: "monitoringagent1"
+        replicas: 1
+        jmxport: ""
+        jmxEnabled: "true"
+        jvmJMXOpts: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false  -Dcom.sun.management.jmxremote.password.file=../config/jmxremote.password -Dsecure.access.name=admin -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.port=9090 -Dcom.sun.management.jmxremote.rmi.port=9090"
+        jvmOpts: "-Djava.net.preferIPv4Addresses=true"
+        jvmGCOpts: ""
+        restartCount: "0"
+        nodeSelector: ""
+      - name: "monitoringagent2"
+        replicas: 1
+        jmxport: ""
+        jmxEnabled: "true"
+        jvmJMXOpts: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false  -Dcom.sun.management.jmxremote.password.file=../config/jmxremote.password -Dsecure.access.name=admin -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.port=9090 -Dcom.sun.management.jmxremote.rmi.port=9090"
+        jvmOpts: "-Djava.net.preferIPv4Addresses=true"
+        jvmGCOpts: ""
+        restartCount: "0"
+        nodeSelector: ""
+charging:
+   labels: "ece"
+   jmxport: "31022"
+   coherencePort: ""
+   terminationGracePeriodSeconds: 180
+   persistenceEnabled: "true"
+   hpaEnabled: "false"
+   remEnabled: "false"
+   #set incrementalCustomerLoad to "true" and migration.loader.initialCustomerLoadFilterQuery to load initial set of subscribers in ece cache on fresh install and
+   #set migration.loader.incrementalCustomerLoadFilterQuery to load subscribers incrementally using customerloader job on helm upgrade after ECE is in usage processing state.
+   #changing incrementalCustomerLoad from "false" to "true" or vice versa after ECE is up, can cause customerUpdater pod(s) to restart.
+   incrementalCustomerLoad: "false"
+   parallelPodManagement: "false"
+   timeoutSurvivorQuorum: "3"
+   chargingServerWorkerNodes: "3"
+   clusterDomain: ""
+   # if autoGenerateAppConfig is set, then diameterGatewayConfig, cdrFormatterConfiguration, cdrGatewayConfiguration, httpGatewayConfig,
+   # nfProfileConfig, nfServiceConfig, brmGatewayConfiguration will automatically replicated for all sites in charging-settings.xml same as primary site.
+   # this doesn't generate ratedEventFormatterConfiguration, oraclePersistence, cachePersistence, ratedEventPublisher, kafka configuration, JMSConfiguration, siteConfig and customerGroupConfig. it must be defined in override file for each site.
+   # if autoGenerateAppConfig is disabled, then all pods configuration, other appConfigs for all sites must be configured in override file in active-active set up. Make sure coherence members are unique in each site.
+   # autoGenerateAppConfig is mainly set for large systems to automatically generate some app config.
+   autoGenerateAppConfig: "true"
+   metrics:
+      port: "19612"
+   ecs:
+     jmxport: ""
+     # out of total configured replicas of ecs statefulset, first few replica(s) will be management enabled.
+     # value of managementEnabledReplicas attribute must be at least 1 and less than replicas attribute of ecs.
+     replicas: 3
+     maxreplicas: 3
+     managementEnabledReplicas: 1
+     averageCpuUtilization: 70
+     averageMemoryUtilization: ""
+     cpuLimit: 2000m
+     cpuRequest: 1000m
+     memoryLimit: 3Gi
+     memoryRequest: 2Gi
+     scaleDownStabilizationWindowSeconds: 120
+     disableHpaScaleDown: "false"
+     coherenceMemberName: "ecs"
+     jmxEnabled: true
+     coherencePort:
+     jvmGCOpts: "-XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+PrintTenuringDistribution -XX:+PrintAdaptiveSizePolicy -XX:-UseGCLogFileRotation -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:MaxGCPauseMillis=50 -XX:GCPauseIntervalMillis=200 -XX:NumberOfGCLogFiles=99"
+     jvmJMXOpts: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false "
+     jvmCoherenceOpts: "-Dcoherence.role=OracleCommunicationBrmChargingServerChargingLauncher -Dpof.config=charging-pof-config.xml -Dcoherence.override=charging-coherence-override-dev.xml  -Dcoherence.security=false -Dsecure.access.name=admin"
+     jvmOpts: "-Dece.metrics.http.service.enabled=true"
+     restartCount: "0"
+   pricingupdater:
+      jmxport: ""
+      replicas: 1
+      coherenceMemberName: "pricingupdater"
+      jmxEnabled: true
+      coherencePort:
+      jvmGCOpts: "-XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+PrintTenuringDistribution -XX:+PrintAdaptiveSizePolicy -XX:-UseGCLogFileRotation -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:MaxGCPauseMillis=50 -XX:GCPauseIntervalMillis=200 -XX:NumberOfGCLogFiles=99"
+      jvmJMXOpts: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false "
+      jvmCoherenceOpts: "-Dpof.config=charging-pof-config.xml -Dcoherence.override=charging-coherence-override-dev.xml  -Dcoherence.security=false -Dsecure.access.name=admin"
+      jvmOpts: "-Dece.metrics.http.service.enabled=true"
+      restartCount: "0"
+   configLoader:
+      coherenceMemberName: "configloader"
+      jmxEnabled: false
+      jvmGCOpts: "-XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+PrintTenuringDistribution -XX:+PrintAdaptiveSizePolicy -XX:-UseGCLogFileRotation -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:MaxGCPauseMillis=50 -XX:GCPauseIntervalMillis=200 -XX:NumberOfGCLogFiles=99"
+      jvmJMXOpts: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false "
+      jvmCoherenceOpts: "-Dpof.config=charging-pof-config.xml -Dcoherence.override=charging-coherence-override-dev.xml  -Dcoherence.security=false -Dsecure.access.name=admin"
+      jvmOpts: ""
+      coherencePort:
+   customerLoader:
+      coherenceMemberName: "customerloader"
+      jvmGCOpts: "-XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+PrintTenuringDistribution -XX:+PrintAdaptiveSizePolicy -XX:-UseGCLogFileRotation -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:MaxGCPauseMillis=50 -XX:GCPauseIntervalMillis=200 -XX:NumberOfGCLogFiles=99"
+      jvmCoherenceOpts: "-Dpof.config=charging-pof-config.xml -Dcoherence.override=charging-coherence-override-dev.xml  -Dcoherence.security=false -Dsecure.access.name=admin"
+      jvmOpts: ""
+      coherencePort:
+   query:
+      jvmJMXOpts: "-Dcom.sun.management.jmxremote.password.file=../config/jmxremote.password -Dsecure.access.name=admin -Dcom.sun.management.jmxremote.authenticate=false"
+      jvmCoherenceOpts: "-Dtangosol.pof.config=charging-pof-config.xml -Dtangosol.coherence.override=charging-coherence-override-dev.xml -Dtangosol.coherence.security=false -Dsecure.access.name=admin -Dtangosol.coherence.log.level=9 -Djava.security.auth.login.config=../config/coherence-jaas.config -Dtangosol.coherence.security.permissions=../config/permissions.xml"
+      jvmOpts: "-Djava.net.preferIPv4Addresses=true"
+   clusterName: "BRM"
+   isFederation: "false"
+   activeCluster: "true"
+   primaryCluster: "true"
+   secondaryCluster: "false"
+   clusterTopology: "active-active"
+   cluster:
+      primary:
+         clusterName: "BRM"
+         eceServiceName: ece-server
+         eceServicefqdnOrExternalIP: ""
+      secondary:
+        - clusterName: "BRM2"
+          eceServiceName: ""
+          eceServicefqdnOrExternalIP: ""
+   federatedCacheScheme:
+      federationPort:
+         brmfederated: 31016
+         xreffederated: 31017
+         replicatedfederated: 31018
+         offerProfileFederated: 31019
+   eceWalletLocation: "/home/charging/wallet/ecewallet/"
+   brmWalletServerLocation: "/home/charging/wallet/brmwallet/server/cwallet.sso"
+   brmWalletClientLocation: "/home/charging/wallet/brmwallet/client/cwallet.sso"
+   brmWalletLocation: "/home/charging/wallet/brmwallet"
+   customSSLWallet: false
+   secretCustomWallet:
+      name:
+   server:
+      aopEnabled: "false"
+      aopVariance: "PT10M"
+      degradedModeThreshold: "0"
+      reverseRateUseAllBalances: "false"
+      debitRefundSessionEvictionSize: "10"
+      currencyScale: "2"
+      currencyRoundingMode: "HALF_UP"
+      nonCurrencyScale: "2"
+      nonCurrencyRoundingMode: "HALF_UP"
+      nonLinearRatingEnabled: "false"
+      tariffTimeChangeSupported: "false"
+      systemConsumptionRule: "EARLIEST_START_EARLIEST_EXPIRATION"
+      thresholdBreachNotificationMode: "ON_TERMINATE"
+      accountingOnOffMode: "CANCEL"
+      offerEligibilitySelectionMode: "END_TIME"
+      alignRecurringImpactsToOffer: "false"
+      sharingRetryCount :  "200"
+      remainingBalanceCalcMode: "NONE"
+      virtualTime: ""
+      virtualTimeMode: "0"
+      concurrentRatedEventFederatedSleepTime: "0"
+      systemCurrencyNumericCode: "840"
+      treatNoRatingGraphAsError: "true"
+      matchFactorEnabled: "false"
+      skipCreditFloorBreachCheck: "false"
+      rateZeroQuantity: "false"
+      groupNotificationEnabled: "false"
+      brmPostCommitEnabled: "false"
+      updateRequestServerTimeout: "20000"
+      failBalanceUpdatesOnCreditCeilingBreach: "false"
+      asoCleanupOperationList: "TERMINATE,CANCEL"
+      kafkaEnabledForNotifications: "true"
+      terminatedSessionHistoryCacheEnabled: "false"
+      supportOriginalBeat: "false"
+      walletReadRetryInterval: "100"
+      walletReadRetryCount: "10"
+      useOfferPriorityDuringAlterationAgreementEvaluation: "false"
+      debitSessionCheckDisabled: "false"
+      randomizationIntervalForUsageValidity: "0"
+      populateCurrentLoanAmountsOnRef: "false"
+      saveNonCounterGrantDuringOngoingSession: "false"
+      skipFailBalanceUpdatesOnCreditCeilingBreach: "false"
+      checkReservationOverImpact: "false"
+      cycleForwardRenewTimeInSecond: "0"
+      weblogic:
+         jmsmodule: ECE
+         subdeployment: ECEQueue
+   customerGroupConfigurations:
+      - name:
+        clusterPreference:
+          - priority: "1"
+            routingGatewayList: ""
+            name: "BRM"
+          - priority: "2"
+            routingGatewayList: ""
+            name: "BRM2"
+      - name:
+        clusterPreference:
+          - priority: "2"
+            routingGatewayList: ""
+            name: "BRM"
+          - priority: "1"
+            routingGatewayList: ""
+            name: "BRM2"
+   siteConfigurations:
+      - name: "BRM"
+        monitorAgentJmxConfigurations:
+          - name: "monitoringagent1"
+            host:
+            jmxPort:
+            disableMonitor:
+          - name: "monitoringagent2"
+            host:
+            jmxPort:
+            disableMonitor:
+      - name: "BRM2"
+        monitorAgentJmxConfigurations:
+          - name: "monitoringagent1"
+            host:
+            jmxPort:
+            disableMonitor:
+          - name: "monitoringagent2"
+            host:
+            jmxPort:
+            disableMonitor:
+   ratedEventPublishers:
+     -  clusterName: "BRM"
+        noSQLConnectionName: "noSQLConnection"
+        threadPoolSize: "4"
+   itemAssignmentConfig:
+      itemAssignmentEnabled: "true"
+      delayToleranceIntervalInDays: "0"
+      poidPersistenceSafeCount: "12000"
+      poidIdConfigurations:
+        - schemaName: "1"
+          poidQuantity: "2000000"
+   simpleFileBasedRatedEventPublisher:
+      targetFileDirectory: "../"
+   errorHandler:
+      maxNumberSystemExceptionsWithDetailedLoggingPerSecond: "10"
+      maxNumberSystemExceptionsWithDetailedLoggingPerMinute: "100"
+      maxNumberSystemExceptionsWithDetailedLoggingPerHour: "300"
+   notification:
+      creditCeilingBreachNotificationMode: "NONE"
+      creditFloorBreachNotificationMode: "NONE"
+      thresholdBreachNotificationMode: "NONE"
+      topUpNotificationMode: "NONE"
+      rarNotificationMode: "NONE"
+      externalTopUpNotificationMode: "NONE"
+      billingNotificationMode: "NONE"
+      adviceOfChargeNotificationMode: "NONE"
+      replenishPoidIdNotificationMode: "ASYNCHRONOUS"
+      lifeCycleTransitionNotificationMode: "NONE"
+      firstUsageValidityInitNotificationMode: "NONE"
+      offeringUsageValidityInitNotificationMode: "ASYNCHRONOUS"
+      spendingLimitNotificationMode: "NONE"
+      aggregatedSpendingLimitNotificationMode: "NONE"
+      subscriberPreferenceUpdateNotificationMode: "NONE"
+      rerateJobCreateNotificationMode: "ASYNCHRONOUS"
+      customEventNotificationMode: "NONE"
+      enrichBalanceQueryResponseMode: "NONE"
+      loanGrantNotificationMode: "NONE"
+      subscriptionCycleForwardMode: "NONE"
+      notificationEnrichmentConfigList:
+            enrichName: "subscriberPreferences"
+            enrichValue: ""
+   diameterGatewayPeerConfigurations:
+      - peerName: "peer1"
+        diameterGatewayAlternatePeerConfigurations:
+          - alternatePeerName: "alternatePeer1"
+          - alternatePeerName: "alternatePeer2"
+   expirationConfiguration:
+         expiredAuditRetentionIntervalInDays: "45"
+         expiredPurchasedChargesRetentionIntervalInDays: "20"
+         expiredPurchasedAlterationRetentionIntervalInDays: "30"
+         expiredRatingProfileRetentionIntervalInDays: "40"
+         defaultExpirationRetentionIntervalInDays: "50"
+         defaultExpiredBalanceItemRetentionIntervalInDays: "60"
+         defaultExpiredRBundleHistoryRetentionIntervalInDays: "30"
+         expiredAsoRetentionIntervalInDays: "-1"
+         debitRefundSessionCleanUpIntervalInDays: "-1"
+   extensions:
+      preRatingExtension: ""
+      ratingExtension: ""
+      postRatingExtension: ""
+      postChargingExtension: ""
+      diameterGyExtension: ""
+      radiusAuthExtension: ""
+      radiusAccountingExtension: ""
+      postUpdateExtension: ""
+      httpExtension: ""
+      brmGwExtension: ""
+      preRatingMidSessionExtension: ""
+      diameterSyExtension: ""
+      postRatingMidSessionExtension: ""
+   brmCdrPlugins:
+     brmCdrPluginConfigurationList:
+        - brmCdrPluginConfiguration:
+            name: "brmCdrPlugin1"
+            tempDirectoryPath: "/tmp/tmp"
+            doneDirectoryPath: "/home/charging/rel_input/"
+            invalidRatedEventDirectoryPath: "/tmp/invalid"
+            doneFileExtension: ".out"
+            headerFileExtension: ".out"
+            dataFileExtension: ".blk"
+            ctlFileExtension: ".ctl"
+            headerFileDirectoryPath: "/home/charging/rel_input/"
+            dataFileDirectoryPath: "/home/charging/rel_input/"
+            enableInvalidRatedEvents: "false"
+            sqlLoaderCharacterSet: "UTF8"
+            prepaidPartitionSet: "0"
+   cdrFormatterPlugins:
+     cdrFormatterPluginConfigurationList:
+       cdrFormatterPluginConfiguration:
+         name: "cdrFormatterPlugin1"
+         tempDirectoryPath: "/tmp/tmp"
+         doneDirectoryPath: "/home/charging/cdr_input"
+         doneFileExtension: ".out"
+         enableKafkaIntegration: "false"
+         enableDiskPersistence: "true"
+         maxCdrCount: "20000"
+   nfProfileConfigurations:
+     instanceIdMapping: ""
+     nfProfileConfigurationList:
+        - name: "httpGateway1"
+          clusterName: "BRM"
+          nrfRestEndPointUrl: ""
+          nrfHttp2Enable: "true"
+          nfType: "CHF"
+          fqdn: ""
+          ipv4Addresses: ""
+          capacity: "0"
+          load: "0"
+          supiRangeListStart: "10000"
+          supiRangeListEnd: "10008"
+          supiRangeListPattern: "^nai-450081.+@.+org$"
+          gpsiRangeListStart: "10000"
+          gpsiRangeListEnd: "10008"
+          gpsiRangeListPattern: "^extid-.+@oracle1.com$"
+          plmnRangeListStart: "100000"
+          plmnRangeListEnd: "333333"
+          plmnRangeListPattern: ""
+          nfStatus: "REGISTERED"
+          heartBeatTimer: ""
+          plmnListMcc: ""
+          plmnListMnc: ""
+          snssaisSdl: ""
+          snssaisSst: ""
+          perPlmnSnssaiListPlmnIdMcc: ""
+          perPlmnSnssaiListPlmnIdMnc: ""
+          perPlmnSnssaiListSst: ""
+          perPlmnSnssaiListSd: ""
+          nsiList: ""
+          interPlmnFqdn: ""
+          ipv6Addresses: ""
+          allowedPlmnsMcc: ""
+          allowedPlmnsMnc: ""
+          allowedNfTypes: ""
+          allowedNfDomains: ""
+          allowedNssaisSst: ""
+          allowedNssaisSd: ""
+          locality: ""
+          customInfo: ""
+          recoveryTime: ""
+          nfServicePersistence: ""
+          nfProfileChangesSupportInd: ""
+          nfProfileChangesInd: ""
+          defaultNotificationSubscriptionsNotificationType: ""
+          defaultNotificationSubscriptionsCallbackUri: ""
+          defaultNotificationSubscriptionsN1MessageClass: ""
+          defaultNotificationSubscriptionsN2InformationClass: ""
+          httpGatewayName: "httpGateway1"
+   nfServiceConfigurations:
+    nfServiceConfigurationList:
+         - name: "chf1"
+           clusterName: "BRM"
+           serviceInstanceId: "chf1"
+           serviceName: "nchf-convergedcharging"
+           apiVersionInUri: "v1"
+           apiFullVersion: "1.R15.1.0"
+           expiry: "2020-12-01T18:55:08.871Z"
+           scheme: "http"
+           nfServiceStatus: "REGISTERED"
+           ipv4Address: ""
+           transport: "TCP"
+           port: ""
+           capacity: "50"
+           load: "5"
+           priority: "1"
+           interPlmnFqdn: ""
+           ipv6Address: ""
+           defaultNotificationSubscriptionsNotificationType: ""
+           defaultNotificationSubscriptionsCallbackUri: ""
+           defaultNotificationSubscriptionsN1MessageClass: ""
+           defaultNotificationSubscriptionsN2InformationClass: ""
+           allowedPlmnsMcc: ""
+           allowedPlmnsMnc: ""
+           allowedNfTypes: ""
+           allowedNfDomains: ""
+           allowedNssaisSst: ""
+           allowedNssaisSd: ""
+           recoveryTime: ""
+           supportedFeatures: ""
+           primaryChfServiceInstance: ""
+           secondaryChfServiceInstance: ""
+           fqdn: ""
+           apiPrefix: ""
+           httpGatewayName: "httpGateway1"
+   cachePersistenceConfigurations:
+      cachePersistenceConfigurationList:
+        -  clusterName: "BRM"
+           persistenceStoreType: "OracleDB"
+           persistenceConnectionName: "oraclePersistence1"
+           reloadThreadPoolSize: "10"
+           configLoadFromPersistence: "false"
+           pricingLoadFromPersistence: "false"
+           customerLoadFromPersistence: "false"
+           partitionLossRecoverFromPersistence: "true"
+           writeBehindThreadPoolSize: "1"
+   connectionConfigurations:
+         OraclePersistenceConnectionConfigurations:
+            - clusterName: "BRM"
+              schemaNumber: "1"
+              name: "oraclePersistence1"
+              dbSysDBAUser: "sys"
+              dbSysDBARole: "sysdba"
+              userName: "ece"
+              hostName: ""
+              port: "1521"
+              sid: ""
+              service: ""
+              tablespace: "ecetable"
+              temptablespace: "ecetemp"
+              cdrstoretablespace: "ececdrtablespace"
+              cdrstoreindexspace: "ececdrindexspace"
+              jdbcUrl: ""
+              retryCount: "3"
+              retryInterval: "1"
+              maxStmtCacheSize: "100"
+              connectionWaitTimeout: "300"
+              timeoutConnectionCheckInterval: "300"
+              inactiveConnectionTimeout: "300"
+              databaseConnectionTimeout: "600"
+              persistenceInitialPoolSize: "4"
+              persistenceMinPoolSize: "4"
+              persistenceMaxPoolSize: "12"
+              reloadInitialPoolSize: "0"
+              reloadMinPoolSize: "0"
+              reloadMaxPoolSize: "20"
+              ratedEventFormatterInitialPoolSize: "6"
+              ratedEventFormatterMinPoolSize: "6"
+              ratedEventFormatterMaxPoolSize: "6"
+              ratedEventTablePartitionByMinute: "5"
+              ratedEventTableStorageInitial: "104857600"
+              ratedEventTableStorageNext: "104857600"
+              ratedEventTableSubpartitions: "32"
+              dbSSLEnabled: "false"
+              dbSSLType: "oneway"
+              sslServerCertDN: "DC=local,DC=oracle,CN=pindb"
+              trustStoreLocation: "/home/charging/ext/ece_ssl_db_wallet/schema1/cwallet.sso"
+              trustStoreType: "SSO"
+              walletLocation: "/home/charging/wallet/ecewallet/"
+              cdrStorePartitionCount: "32"
+              queryTimeout: "5"
+         NoSQLConnectionConfigurations:
+            - clusterName: "BRM"
+              name: "noSQLConnection"
+              dataStoreConnection: ""
+              dataStoreConnectionHost: ""
+              dataStoreConnectionAlias: ""
+              dataStoreConnectionIP: ""
+              dataStoreName: "kvstore"
+              noSQLTimeout: "5"
+              retryCount: "5"
+              cdrStorePartitionCount: "32"
+         BRMConnectionConfiguration:
+            name: "brmConnection"
+            hostName: "cm"
+            protocol: "pcp"
+            loginName: "root.0.0.0.1"
+            cmPort: "11960"
+            loginType: "1"
+            numberOfConnections: "10"
+            sslEnabled: "1"
+            failOverConnectionUrls: ""
+            eceWalletLocation: "/home/charging/wallet/ecewallet/"
+            brmwallet: "/home/charging/wallet/brmwallet/client/cwallet.sso"
+   brsConfigurations:
+      brsConfigurationList:
+         brsConfig:
+            acceptablePendingCount: "10"
+            highPriorityBatchSize: "2"
+            highPriorityBatchTimeout: "30"
+            highPriorityThreadPoolSize: "-1"
+            name: "default"
+            overloadProtection: "false"
+            pendingRequestHeapUsageThresholdPercentage: "30"
+            regularPriorityBatchSize: "1"
+            regularPriorityBatchTimeout: "50"
+            regularPriorityThreadPoolSize: "200"
+            reportingWindowSize: "30"
+            responseTimeout: "10"
+            thresholdLatency: "10" 
+            throttleProcessingPerCustomer: "false"
+            httpConnectionPoolMax: "500"
+            updateResponseMaxWaitTime: "10000"
+            skipActiveActivePreferredSiteRouting: "false"
+   kafkaConfigurations:
+      kafkaConfigurationList:
+         - name: "BRM"
+           hostname: "ece-kafka:9093"
+           topicName: "ECENotifications"
+           suspenseTopicName: "ECESuspenseQueue"
+           failureTopicName: "EceFailureQueue"
+           overageTopicName: "ECEOverageTopicName"
+           partitions: "200"
+           failurePartitions: "200"
+           walletLocation: "/home/charging/wallet/ecewallet/"
+           kafkaProducerReconnectionInterval: "2000"
+           kafkaProducerReconnectionMax: "3600000"
+           kafkaDGWReconnectionInterval: "2000"
+           kafkaDGWReconnectionMax: "3600000"
+           kafkaBRMReconnectionInterval: "2000"
+           kafkaBRMReconnectionMax: "3600000"
+           kafkaHTTPReconnectionInterval: "2000"
+           kafkaHTTPReconnectionMax: "3600000"
+           persistFailedRequestsToKafkaTopic: "false"
+           kafkaCDRTopicName: "ChfChargingRecords"
+           kafkaCDRPartitions: "1"
+           kafkaCDRSSLEnabled: "false"
+           kafkaCDRTrustStoreLocation: ""
+           kafkaCDRCompressionType: "gzip"
+
+migration:
+   loader:
+      pricingDataDirectory: "/home/charging/opt/ECE/oceceserver/sample_data/pricing_data"
+      configObjectsDataDirectory: "/home/charging/opt/ECE/oceceserver/sample_data/config_data/specifications/ece_end2end"
+      productOfferingCrossRefFilePath: "/home/charging/opt/ECE/oceceserver/sample_data/crossref_data/ProductXRefSample.xml"
+      customerDataDirectory: "/home/charging/opt/ECE/oceceserver/sample_data/customer_data"
+      customerXmlPattern: "customer"
+      remoteWmThreads: "1"
+      batchSize: "5000"
+      dbConnections: "1"
+      dbFetchSize: "5000"
+      payloadConfigFilePath: "@PAYLOAD_CONFIG_FILE_PATH@"
+      selectiveMigrationMode: "false"
+      initialCustomerLoadFilterQuery: ""
+      incrementalCustomerLoadFilterQuery: ""
+      #customerGroupList - values must be separated by Commas - Used only if isFederation is true
+      customerGroupList: ""
+   pricingUpdater:
+      hostName: ""
+      port: ""
+      userName: "weblogic"
+      connectionURL: ""
+      connectionRetryCount: "10"
+      connectionRetrySleepInterval: "10000"
+      connectionFactory: "JobDispatcher/MyXAQCF"
+      workItemQueueName: "BPA/ECE_WorkItemQueue"
+      workResultQueueName: "JobDispatcher/WORKRESULTDATA_QUEUE"
+      protocol: "t3://"
+      initialContextFactory: "weblogic.jndi.WLInitialContextFactory"
+      requestTimeOut: "3000"
+      keyStoreLocation: ""
+      requestSpecXMLGenarationEnabled: "false"
+      requestSpecXMLGenarationLocation: "../config/generated-request-specifications/"
+
+testtools:
+   common:
+      numCustomers: "1000"
+      startCustomerId: "6500000000"
+      numTxCustomers: "100"
+      startTxCustomerId: "4900000000"
+      numProducts: "1"
+   simulators:
+      simulatorConfig:
+          name: "ece-invocation"
+          duration: "30"
+          throughput: "200"
+          usageIC: "20"
+          usageIUT: "60"
+          usageT: "20"
+          usageP: "0"
+          usageTraffic: "100"
+          queryTraffic: "0"
+          policyTraffic: "0"
+          queryBalance: "0"
+          balanceQueryMode: "SUMMARY"
+          querySubscriberPreference: "0"
+          queryAuthentication: "0"
+          policySubscriptionTraffic: "30"
+          policySpendingLimitNotificationTraffic: "50"
+          policySessionTraffic: "20"
+          policySubscriberPreferences: "Channel;Language"
+          policyCounters: "FREE_MIN;USAGE_COUNTER"
+          updateBalance: "50"
+          updateTypeCreateCustomer: "20"
+          updatePui: "30"
+          writeLogPercentage: "10"
+          productType: "TelcoGsmTelephony"
+          sessionStartDate: "06/02/2020 10:45:00"
+          tokenUnits: "10"
+          mscc: "false"
+          useCondensedPeriodBetweenOperationsInSession: "false"
+          txTraffic: "0"
+          latencyTrackingResetDelayInSeconds: "10"
+      sessionUnitConfig:
+           sessionUnits: "15"
+           percentage: "100"
+   loader:
+         customerBatchSize: "500"
+         customerThreads: "2"
+         numCreditProfiles: "4"
+         numSubscriptionProductOfferings: "1"
+         purchasedOfferingsPerProduct: "1"
+         rum: "end - start"
+         subscriptionGraphs: "#name: m4 [rate:linearRate(0.05/mn),balance_element:&quot;USD&quot;]"
+         systemAlterationGraphs: "[rate:fixedAlteration(-0.10),balance_element:&quot;USD&quot;]"
+         numSystemAlterationOfferings: "1"
+         specFilesDirectory: "/home/charging/opt/ECE/oceceserver/sample_data/config_data/specifications/ece_simple"
+   customerGenerator:
+         customersPerFile: "500"
+         balanceAmount: "-100"
+         balanceElementId: "840"
+         productOfferings: "Milestone4Sample4ChargeOffering"
+         alterationOfferings: "AO2_PercentDisc"
+         distributionOfferings: "CS50%Sharing"
+         shareAlterationAgreements: "true"
+         productTypes: "/service/telco/gsm/telephony"
+         destinationDir: "."
+         balanceItemsPerBalance: "1"
+         aliasesPerProduct: "1"
+         productRatingProfiles: "PFAF"
+         customerRatingProfiles: "CFAF"
+         numAuditRevisions: "0"
+         validateXml: "true"
+         isTemplateDriven: "false"
+         customerTemplateFile: "../sample_data/customer_data/customer_templates/cust_template_simple.xml"
+         txCustomerTemplateFile: "../sample_data/customer_data/customer_templates/cust_template_sharing.xml"
+         multipleBalances: "true"
+         extendedCustomerAttributes: "ACCOUNT_TAG: GoldCustomer"
+         extendedProductAttributes: "SERVICE_ID: Tel0001,TELCO_INFO.MSISDN: 1231231234"
+
+subscriberTrace:
+   filePath: "/home/charging/config/subscriber-trace.xml"
+   logMaxSubscribers: "100"
+   logMaxSubscriberSessions: "24"
+   logExpiryWaitTime: "1"
+   logCleanupInterval: "2"
+   logLevel: "DEBUG"
+   subscriberList: ""
+log4j2:
+   logger:
+      appconfiguration: "ERROR"
+      balance: "ERROR"
+      brs: "ERROR"
+      brsDiagnostics: "INFO"
+      diametergatewayCdrtrace: "OFF"
+      ecsCdrtrace: "OFF"
+      config: "ERROR"
+      customer: "ERROR"
+      dsl: "ERROR"
+      ecegatewayDiameterFramework: "INFO"
+      ecegatewayDiameterGy: "INFO"
+      ecegatewayDiameterLauncher: "INFO"
+      ecegatewayDiameterSh: "INFO"
+      ecegatewayDiameterSy: "INFO"
+      diameterTekelec: "ERROR"
+      camiant: "INFO"
+      camiantDiameterApps: "INFO"
+      ecegatewayRadius: "INFO"
+      ecegatewayHttpServer: "INFO"
+      ecegatewayCdr: "INFO"
+      cdrFormatter: "INFO"
+      cdrFormatterPlugin: "INFO"
+      extensions: "INFO"
+      federationClient: "ERROR"
+      federationInterceptor: "ERROR"
+      identity: "ERROR"
+      brmgateway: "ERROR"
+      emgateway: "ERROR"
+      kafka: "ERROR"
+      messagesFramework: "ERROR"
+      messagesManagement: "ERROR"
+      messagesQuery: "ERROR"
+      messagesUpdate: "ERROR"
+      messagesUsage: "ERROR"
+      migrationConfig: "INFO"
+      migrationCrossref: "INFO"
+      customerLoader: "INFO"
+      customerUpdater: "ERROR"
+      pricingLoader: "INFO"
+      pricingUpdater: "INFO"
+      notification: "ERROR"
+      requestenrichment: "ERROR"
+      orchestrationCommon: "ERROR"
+      orchestrationFramework: "ERROR"
+      orchestrationManagement: "ERROR"
+      orchestrationQuery: "ERROR"
+      orchestrationSubscription: "ERROR"
+      orchestrationUpdate: "ERROR"
+      orchestrationUsage: "ERROR"
+      pdcspecgen: "ERROR"
+      pricing: "ERROR"
+      processorFramework: "WARN"
+      processorManagement: "ERROR"
+      processorUpdate: "ERROR"
+      processorUsage: "ERROR"
+      product: "ERROR"
+      ratedeventDao: "ERROR"
+      ratedeventFormatter: "INFO"
+      ratedeventFormatterPlugin: "INFO"
+      ratedeventPurgeratedevent: "INFO"
+      ratedeventService: "INFO"
+      ratedeventtrace: "ERROR"
+      rating: "ERROR"
+      ratingCharge: "ERROR"
+      ratingAlteration: "ERROR"
+      ratingDistribution: "ERROR"
+      server: "INFO"
+      session: "ERROR"
+      sharingagreement: "ERROR"
+      statemanager: "ERROR"
+      subscribertraceConfiguration: "INFO"
+      subscribertraceLog: "INFO"
+      monitorFramework: "ERROR"
+      monitorAgent: "ERROR"
+      monitorConfiguration: "ERROR"
+      monitorUtils: "ERROR"
+      monitorSummary: "INFO"
+      monitorAlert: "INFO"
+      cachepersistenceDao: "INFO"
+      cachepersistenceReload: "INFO"
+      cachepersistencePersist: "INFO"
+      cachepersistenceData: "INFO"
+      cachepersistenceUtil: "INFO"
+      toolsLpr: "INFO"
+      tools: "INFO"
+      highavailability2: "INFO"
+      transports: "ERROR"
+      util: "ERROR"
+      Coherence: "ERROR"
+      springframework: "ERROR"
+      brmRatedeventmanager: "ERROR"
+      brmRatedeventmanagerDiagnostic: "ERROR"
+      root: "ERROR"
+
+eceproperties:
+   rootDir: "/home/charging/opt/ECE/oceceserver"
+   logsDir: "/home/charging/opt/ECE/oceceserver/logs"
+JMSConfiguration:
+   NotificationQueue:
+      - Cluster: "BRM"
+        HostName:
+        Port:
+        UserName: weblogic
+        Protocol: t3://
+        ConnectionURL:
+        ConnectionRetryCount: 10
+        KeyStoreLocation: /home/charging/ext/ece_ssl_keystore/client.jks
+        EceWalletLocation: /home/charging/wallet/ecewallet/
+   BRMGatewayNotificationQueue:
+      - Cluster: "BRM"
+        HostName:
+        Port:
+        UserName: weblogic
+        Protocol: t3://
+        ConnectionURL:
+        KeyStoreLocation: /home/charging/ext/ece_ssl_keystore/client.jks
+        EceWalletLocation: /home/charging/wallet/ecewallet/
+   DiameterGatewayNotificationQueue:
+      - Cluster: "BRM"
+        HostName:
+        Port:
+        UserName: weblogic
+        Protocol: t3://
+        ConnectionURL:
+        KeyStoreLocation: /home/charging/ext/ece_ssl_keystore/client.jks
+        EceWalletLocation: /home/charging/wallet/ecewallet/
+
+REFPluginConfiguration:
+   connectionURL1:
+   connectionURL2:
+   connectionURL3:
+   user1: "pin"
+   user2:
+   user3:
+   wallet_location:
+   wallet_entry_name1: "brm.db.pwd"
+   wallet_entry_name2:
+   wallet_entry_name3:
+   validateSchema: "true"
+   initialPoolSize: 1
+   minPoolSize: 1
+   maxPoolSize: 50
+   connectionWaitTimeout: 5
+   validateConnectionOnBorrow: "false"
+   sqlForValidateConnection: "SELECT SYSDATE FROM DUAL"
+   fastConnectionFailoverEnabled: "false"
+   onsConfiguration:
+   maxStatements: 50
+   jmxEnabled: "true"
+   metricUpdateInterval: 10
+   poolLogLevel: "INFO"
+   control_file_dir: 
+   load_thread_capacity: 30
+   update_thread_capacity: 20
+   concurrent_updaters: 4
+   updater_backlog_limit: 50
+   refmode: "DIRECT"
+   creation_process: "RATING_PIPELINE"
+   successmode: "delete"
+   dbSSLEnabled: "false"
+   dbSSLClientAuth: "false"
+   sslTrustStoreLocation: "__DB_SSL_TRUSTSTORE_LOC__"
+   sslKeyStoreLocation: "__DB_SSL_KEYSTORE_LOC__"
+   sslTrustStorePwd: "infranet.rel.db.ssl.truststore.password"
+   sslKeyStorePwd: "infranet.rel.db.ssl.keystore.password"
+
+cmService:
+    ipaddress:
+    port: 11960
+    targetPort: 27015
+brmgatewayService:
+    port: 15502
+cdrgatewayService:
+    port: 8084
+diametergatewayService:
+    port: 3868
+radiusgatewayService:
+    port: 1812
+httpgatewayService:
+    port: 8080
+jmxservice:
+    port: ""
+    type: NodePort
+monitoringagent:
+    type: NodePort
+
+pv:
+   external:
+       name: external-pv
+       hostPath: ""
+       accessModes: ReadWriteMany
+       capacity: 500Mi
+pvc:
+   logs:
+       name: logs-pvc
+       accessModes: ReadWriteMany
+       storage: 500Mi
+   brmconfig:
+       name: brmconfig-pvc
+       accessModes: ReadWriteMany
+       storage: 500Mi
+   sdk:
+       name: sdk-pvc
+       accessModes: ReadWriteMany
+       storage: 500Mi
+   cdrformatter:
+     name: cdrformatter-pvc
+     accessModes: ReadWriteMany
+     storage: 500Mi
+   wallet:
+       name: ece-wallet-pvc
+       accessModes: ReadWriteMany
+       storage: 500Mi
+   external:
+       name: external-pvc
+       accessModes: ReadWriteMany
+       storage: 500Mi
+
+storageClass:
+   name:
