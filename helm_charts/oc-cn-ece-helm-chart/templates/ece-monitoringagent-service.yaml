@@ -1,0 +1,38 @@
+#{{ if eq .Values.charging.isFederation "true" }}
+#{{ range $key, $value := .Values.monitoringAgent.monitoringAgentList }}
+#apiVersion: v1
+#kind: Service
+#metadata:
+#  name: ece-monitoringagent-service-external-{{ print (add1 $key) }}
+#  namespace: {{ $.Release.Namespace }}
+#spec:
+#  selector:
+#    monitoragent: monitoringagent{{ print (add1 $key) }}
+#  ports:
+#    - name: monitoringagent-port
+#      {{ if eq $.Values.monitoringagent.type "NodePort" }}
+#      nodePort: {{ $value.jmxport }}
+#      {{ end }}
+#      port: {{ $value.jmxport }}
+#      targetPort: {{ $value.jmxport }}
+#      protocol: TCP
+#  type: {{ $.Values.monitoringagent.type }}
+#---
+#{{ end }}
+#{{ range $key, $value := .Values.monitoringAgent.monitoringAgentList }}
+#apiVersion: v1
+#kind: Service
+#metadata:
+#    name: ece-monitoringagent-service-{{ print (add1 $key) }}
+#    namespace: {{ $.Release.Namespace }}
+#    annotations:
+#      service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+#spec:
+#  ports:
+#    - port: {{ $value.jmxport }}
+#  selector:
+#    monitoragent: monitoringagent{{ print (add1 $key) }}
+#  clusterIP: None
+#---
+#{{ end }}
+#{{ end }}
