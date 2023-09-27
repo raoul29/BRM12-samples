@@ -1,0 +1,15 @@
+#apiVersion: v1
+#kind: Service
+#metadata:
+#  name: ece-brmgateway
+#  labels:
+#    app: ece-brmgateway
+#spec:
+#  type: ClusterIP
+#  ports:
+#   - name: brmgateway
+#     protocol: TCP
+#     port: {{ .Values.brmgatewayService.port }}
+#     targetPort: {{ .Values.brmgatewayService.port }}
+#  selector:
+#    application: brmgateway
