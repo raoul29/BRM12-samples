@@ -1,0 +1,40 @@
+{{- if eq .Values.charging.isFederation "true" }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: ece-server-external
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+    service.beta.kubernetes.io/oci-load-balancer-internal: "true"
+    service.beta.kubernetes.io/oci-load-balancer-shape: flexible
+    service.beta.kubernetes.io/oci-load-balancer-shape-flex-max: "10"
+    service.beta.kubernetes.io/oci-load-balancer-shape-flex-min: "10"
+    service.beta.kubernetes.io/oci-load-balancer-subnet1: ocid1.subnet.oc1.phx.aaaaaaaatwcxea7mqufww4rr3l3n7l3ywbzv4xwyqf7cpu3a5ycbysjl42qa
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+spec:
+  selector:
+    dr: ece-federation
+  ports:
+    -   name: ece-federation-port1
+        nodePort: {{ .Values.charging.federatedCacheScheme.federationPort.brmfederated }}
+        port: {{ .Values.charging.federatedCacheScheme.federationPort.brmfederated }}
+        targetPort: {{ .Values.charging.federatedCacheScheme.federationPort.brmfederated }}
+        protocol: TCP
+    -   name: ece-federation-port2
+        nodePort: {{ .Values.charging.federatedCacheScheme.federationPort.xreffederated }}
+        port: {{ .Values.charging.federatedCacheScheme.federationPort.xreffederated }}
+        targetPort: {{ .Values.charging.federatedCacheScheme.federationPort.xreffederated }}
+        protocol: TCP
+    -   name: ece-federation-port3
+        nodePort: {{ .Values.charging.federatedCacheScheme.federationPort.replicatedfederated }}
+        port: {{ .Values.charging.federatedCacheScheme.federationPort.replicatedfederated }}
+        targetPort: {{ .Values.charging.federatedCacheScheme.federationPort.replicatedfederated }}
+        protocol: TCP
+    -   name: ece-federation-port4
+        nodePort: {{ .Values.charging.federatedCacheScheme.federationPort.offerProfileFederated }}
+        port: {{ .Values.charging.federatedCacheScheme.federationPort.offerProfileFederated }}
+        targetPort: {{ .Values.charging.federatedCacheScheme.federationPort.offerProfileFederated }}
+        protocol: TCP
+  type: LoadBalancer
+{{- end }}

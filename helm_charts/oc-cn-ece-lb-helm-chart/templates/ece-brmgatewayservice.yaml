@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ece-brmgateway
+  annotations:
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+    service.beta.kubernetes.io/oci-load-balancer-internal: "true"
+    service.beta.kubernetes.io/oci-load-balancer-shape: flexible
+    service.beta.kubernetes.io/oci-load-balancer-shape-flex-max: "10"
+    service.beta.kubernetes.io/oci-load-balancer-shape-flex-min: "10"
+    service.beta.kubernetes.io/oci-load-balancer-subnet1: ocid1.subnet.oc1.phx.aaaaaaaatwcxea7mqufww4rr3l3n7l3ywbzv4xwyqf7cpu3a5ycbysjl42qa
+  labels:
+    app: ece-brmgateway
+spec:
+  type: LoadBalancer
+  ports:
+   - name: brmgateway
+     protocol: TCP
+     port: {{ .Values.brmgatewayService.port }}
+     targetPort: {{ .Values.brmgatewayService.port }}
+  selector:
+    application: brmgateway
